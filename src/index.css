@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Nunito:wght@300;400;500;600;700&family=Caveat:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@theme {
+  --color-cream: #FDF6EC;
+  --color-warm-sand: #F6E7D8;
+  --color-dusty: #EAD9C4;
+  --color-trunk: #6B4A34;
+  --color-trunk-light: #8A5E42;
+  --color-sage: #7C9070;
+  --color-olive: #9CAF88;
+  --color-amber-leaf: #D98E4A;
+  --color-burnt: #C1440E;
+  --color-deep-green: #4E6E58;
+  --color-terracotta: #E07A3F;
+  --color-terracotta-dark: #C96A2F;
+  --color-warm-brown: #3B2E27;
+  --color-peach: #F4D4B8;
+  --color-soft-gold: #F2E2C4;
+
+  --font-serif: 'Fraunces', serif;
+  --font-sans: 'Nunito', sans-serif;
+  --font-hand: 'Caveat', cursive;
+
+  --animate-sway: sway 6s ease-in-out infinite;
+  --animate-drift: drift 50s ease-in-out infinite;
+  --animate-drift-slow: drift 70s ease-in-out infinite;
+  --draw-trunk: drawTrunk 2s ease-out forwards;
+}
+
+@keyframes sway {
+  0%, 100% { transform: rotate(-2deg) translateY(0); }
+  25% { transform: rotate(1deg) translateY(-1px); }
+  50% { transform: rotate(2deg) translateY(-2px); }
+  75% { transform: rotate(-1deg) translateY(-1px); }
+}
+
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -20px) scale(1.05); }
+  66% { transform: translate(-20px, 15px) scale(0.95); }
+}
+
+@keyframes drawTrunk {
+  from { stroke-dashoffset: 1000; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes floatUp {
+  0% { transform: translateY(20px) scale(0.8); opacity: 0; }
+  60% { transform: translateY(-5px) scale(1.05); opacity: 1; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Nunito', sans-serif;
+  color: #3B2E27;
+  background: linear-gradient(180deg, #D5E3F0 0%, #E8D5C4 15%, #F6E7D8 35%, #FDF6EC 60%, #FDF6EC 100%);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.font-serif { font-family: 'Fraunces', serif; }
+.font-sans { font-family: 'Nunito', sans-serif; }
+.font-hand { font-family: 'Caveat', cursive; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #F6E7D8; }
+::-webkit-scrollbar-thumb { background: #C9A876; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #8A5E42; }
