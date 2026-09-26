@@ -91,11 +91,7 @@ function App() {
       <FallingLeavesEffect />
       <SoundToggle />
 
-      <AnimatePresence>
-        {showHero && (
-          <Hero key="hero" settings={settings} onEnter={handleEnterGarden} />
-        )}
-      </AnimatePresence>
+      <Hero settings={settings} onEnter={handleEnterGarden} />
 
       <div>
         <TreeSection
