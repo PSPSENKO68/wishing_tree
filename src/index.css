@@ -19,6 +19,13 @@
   66% { transform: translate(-20px, 15px) scale(0.95); }
 }
 
+@keyframes windSway {
+  0%, 100% { transform: skewX(0deg); }
+  25% { transform: skewX(2deg); }
+  50% { transform: skewX(-1deg); }
+  75% { transform: skewX(3deg); }
+}
+
 @keyframes drawTrunk {
   from { stroke-dashoffset: 1000; }
   to { stroke-dashoffset: 0; }

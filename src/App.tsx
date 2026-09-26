@@ -9,6 +9,7 @@ import { AddLeafForm } from '@/components/AddLeafForm';
 import { Footer } from '@/components/Footer';
 import { SoundToggle } from '@/components/SoundToggle';
 import { AdminPage } from '@/components/AdminPage';
+import { FallingLeavesEffect } from '@/components/FallingLeavesEffect';
 
 type Route = 'public' | 'admin';
 
@@ -87,6 +88,7 @@ function App() {
   return (
     <div className="relative min-h-screen">
       <AmbientBackground />
+      <FallingLeavesEffect />
       <SoundToggle />
 
       <AnimatePresence>
