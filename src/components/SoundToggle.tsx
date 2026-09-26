@@ -36,17 +36,44 @@ const START_SEC = 10;
 const END_SEC = 30;
 
 export function SoundToggle() {
-  const [soundOn, setSoundOn] = useState(false);
+  const [soundOn, setSoundOn] = useState(true);
   const playerRef = useRef<YTPlayer | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const apiLoadedRef = useRef(false);
   const pendingPlayRef = useRef(false);
+  const hasAutoStarted = useRef(false);
 
+  // Auto-start music on first user interaction (browsers require it)
   useEffect(() => {
     const stored = localStorage.getItem('farewell-sound');
-    if (stored === 'true') {
-      setSoundOn(true);
+    if (stored === 'false') {
+      setSoundOn(false);
+      return;
     }
+
+    const autoStart = () => {
+      if (hasAutoStarted.current) return;
+      hasAutoStarted.current = true;
+      setSoundOn(true);
+      localStorage.setItem('farewell-sound', 'true');
+      // Clean up listeners
+      window.removeEventListener('click', autoStart);
+      window.removeEventListener('scroll', autoStart);
+      window.removeEventListener('touchstart', autoStart);
+      window.removeEventListener('keydown', autoStart);
+    };
+
+    window.addEventListener('click', autoStart, { once: false });
+    window.addEventListener('scroll', autoStart, { once: false });
+    window.addEventListener('touchstart', autoStart, { once: false });
+    window.addEventListener('keydown', autoStart, { once: false });
+
+    return () => {
+      window.removeEventListener('click', autoStart);
+      window.removeEventListener('scroll', autoStart);
+      window.removeEventListener('touchstart', autoStart);
+      window.removeEventListener('keydown', autoStart);
+    };
   }, []);
 
   // Load YouTube IFrame API once

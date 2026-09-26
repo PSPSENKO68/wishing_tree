@@ -1,8 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { supabase, type Message, type SiteSettings } from '@/lib/supabase';
-import { AmbientBackground } from '@/components/AmbientBackground';
-import { Hero } from '@/components/Hero';
 import { TreeSection } from '@/components/TreeSection';
 import { MessageCard } from '@/components/MessageCard';
 import { AddLeafForm } from '@/components/AddLeafForm';
@@ -10,6 +8,7 @@ import { Footer } from '@/components/Footer';
 import { SoundToggle } from '@/components/SoundToggle';
 import { AdminPage } from '@/components/AdminPage';
 import { FallingLeavesEffect } from '@/components/FallingLeavesEffect';
+import { SceneryBackground } from '@/components/SceneryBackground';
 
 type Route = 'public' | 'admin';
 
@@ -23,7 +22,6 @@ function App() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const [showForm, setShowForm] = useState(false);
-  const [showHero, setShowHero] = useState(true);
 
   // Listen for route changes
   useEffect(() => {
@@ -74,24 +72,44 @@ function App() {
     }
   }, [route]);
 
-  const handleEnterGarden = () => {
-    setShowHero(false);
-    setTimeout(() => {
-      document.getElementById('tree-section')?.scrollIntoView({ behavior: 'smooth' });
-    }, 300);
-  };
-
   if (route === 'admin') {
     return <AdminPage />;
   }
 
+  const heroTitle = settings?.hero_title || 'Our Flavor Tree';
+  const heroSubtitle = settings?.hero_subtitle || 'Every leaf is a taste we shared.';
+  const honoreeName = settings?.honoree_name || '';
+
   return (
     <div className="relative min-h-screen">
-      <AmbientBackground />
+      <SceneryBackground />
       <FallingLeavesEffect />
       <SoundToggle />
 
-      <Hero settings={settings} onEnter={handleEnterGarden} />
+      {/* Inline hero text above tree */}
+      <section className="relative z-10 text-center pt-16 md:pt-24 pb-4 px-4">
+        <p className="font-hand text-xl md:text-2xl text-terracotta mb-3 opacity-80">
+          A heartfelt farewell for
+        </p>
+        <h1 className="font-serif text-4xl md:text-6xl lg:text-7xl font-700 text-warm-brown leading-tight mb-4">
+          {heroTitle}
+          {honoreeName && (
+            <>
+              {' for '}
+              <br className="md:hidden" />
+              {honoreeName}
+            </>
+          )}
+        </h1>
+        <p className="font-hand text-xl md:text-2xl text-warm-brown/60 italic">
+          {heroSubtitle}
+        </p>
+        {settings?.honoree_role && (
+          <p className="mt-2 text-sm font-sans tracking-widest text-warm-brown/40 uppercase">
+            {settings.honoree_role}
+          </p>
+        )}
+      </section>
 
       <div>
         <TreeSection
@@ -120,7 +138,7 @@ function App() {
         onClose={() => setShowForm(false)}
         onSubmitted={() => {
           setShowForm(false);
-          loadMessages(); // Refresh the tree immediately
+          loadMessages();
         }}
       />
     </div>

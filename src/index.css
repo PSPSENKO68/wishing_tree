@@ -44,7 +44,7 @@ html {
 body {
   font-family: 'Nunito', sans-serif;
   color: #3B2E27;
-  background: linear-gradient(180deg, #D5E3F0 0%, #E8D5C4 15%, #F6E7D8 35%, #FDF6EC 60%, #FDF6EC 100%);
+  background: linear-gradient(180deg, #87CEEB 0%, #B0D4E8 20%, #C9E0EE 35%, #E0EBD8 50%, #E8DFCA 65%, #F2E8D5 80%, #FDF6EC 100%);
   min-height: 100vh;
   overflow-x: hidden;
 }
