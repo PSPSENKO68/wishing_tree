@@ -1,13 +1,6 @@
 export function SceneryBackground() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden z-0" aria-hidden="true">
-      {/* Sky gradient */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background: 'linear-gradient(180deg, #87CEEB 0%, #B0D4E8 20%, #C9E0EE 35%, #E0EBD8 50%, #E8DFCA 65%, #F2E8D5 80%, #FDF6EC 100%)',
-        }}
-      />
 
       {/* Soft clouds */}
       <div
