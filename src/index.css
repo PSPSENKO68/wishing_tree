@@ -4,32 +4,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@theme {
-  --color-cream: #FDF6EC;
-  --color-warm-sand: #F6E7D8;
-  --color-dusty: #EAD9C4;
-  --color-trunk: #6B4A34;
-  --color-trunk-light: #8A5E42;
-  --color-sage: #7C9070;
-  --color-olive: #9CAF88;
-  --color-amber-leaf: #D98E4A;
-  --color-burnt: #C1440E;
-  --color-deep-green: #4E6E58;
-  --color-terracotta: #E07A3F;
-  --color-terracotta-dark: #C96A2F;
-  --color-warm-brown: #3B2E27;
-  --color-peach: #F4D4B8;
-  --color-soft-gold: #F2E2C4;
 
-  --font-serif: 'Fraunces', serif;
-  --font-sans: 'Nunito', sans-serif;
-  --font-hand: 'Caveat', cursive;
-
-  --animate-sway: sway 6s ease-in-out infinite;
-  --animate-drift: drift 50s ease-in-out infinite;
-  --animate-drift-slow: drift 70s ease-in-out infinite;
-  --draw-trunk: drawTrunk 2s ease-out forwards;
-}
 
 @keyframes sway {
   0%, 100% { transform: rotate(-2deg) translateY(0); }

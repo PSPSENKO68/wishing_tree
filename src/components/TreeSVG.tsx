@@ -24,11 +24,7 @@ export function TreeSVG() {
           <stop offset="0%" stopColor="#9CAF88" stopOpacity="0.15" />
           <stop offset="100%" stopColor="#9CAF88" stopOpacity="0" />
         </radialGradient>
-        <filter id="barkTexture">
-          <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" seed="2" />
-          <feColorMatrix values="0 0 0 0 0.42  0 0 0 0 0.29  0 0 0 0 0.20  0 0 0 0.15 0" />
-          <feComposite in2="SourceGraphic" operator="in" />
-        </filter>
+
       </defs>
 
       {/* Canopy glow */}
@@ -44,7 +40,6 @@ export function TreeSVG() {
         initial={{ pathLength: 0 }}
         animate={{ pathLength: 1 }}
         transition={{ duration: 1.5, ease: 'easeOut' }}
-        filter="url(#barkTexture)"
       />
       <motion.path
         d="M 420 700 Q 415 600 410 520 Q 408 440 404 360 Q 402 300 400 250"

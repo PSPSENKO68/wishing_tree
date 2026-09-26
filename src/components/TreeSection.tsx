@@ -12,6 +12,19 @@ interface TreeSectionProps {
   onAddLeaf: () => void;
 }
 
+// Helper to generate a deterministic position if none provided in DB
+function getFallbackPosition(index: number, total: number) {
+  const goldenRatio = 0.618033988749895;
+  const i = index + 1;
+  const angle = i * goldenRatio * Math.PI * 2;
+  const radius = Math.sqrt(i / (total + 1)); 
+  
+  // Distribute within a circular canopy area
+  const x = 50 + Math.cos(angle) * radius * 35; // 15% to 85% width
+  const y = 35 + Math.sin(angle) * radius * 25; // 10% to 60% height
+  return { x, y };
+}
+
 export function TreeSection({ messages, onLeafClick, onAddLeaf }: TreeSectionProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const showSearch = messages.length > 20;
@@ -94,16 +107,24 @@ export function TreeSection({ messages, onLeafClick, onAddLeaf }: TreeSectionPro
 
         {/* Leaves overlay */}
         <div className="absolute inset-0" style={{ height: '71.4%' /* 500/700 */ }}>
-          {messages.map((message, index) => (
-            <TreeLeaf
-              key={message.id}
-              message={message}
-              index={index}
-              onClick={handleLeafClick}
-              dimmed={hasSearch && !matchedIds.has(message.id)}
-              highlighted={hasSearch && matchedIds.has(message.id)}
-            />
-          ))}
+          {messages.map((message, index) => {
+            const pos = getFallbackPosition(index, messages.length);
+            const x = message.position_x ?? pos.x;
+            const y = message.position_y ?? pos.y;
+            
+            return (
+              <TreeLeaf
+                key={message.id}
+                message={message}
+                index={index}
+                x={x}
+                y={y}
+                onClick={handleLeafClick}
+                dimmed={hasSearch && !matchedIds.has(message.id)}
+                highlighted={hasSearch && matchedIds.has(message.id)}
+              />
+            );
+          })}
         </div>
       </div>
 

@@ -95,17 +95,13 @@ function App() {
         )}
       </AnimatePresence>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: showHero ? 0 : 1 }}
-        transition={{ duration: 0.5 }}
-      >
+      <div>
         <TreeSection
           messages={messages}
           onLeafClick={setSelectedMessage}
           onAddLeaf={() => setShowForm(true)}
         />
-      </motion.div>
+      </div>
 
       <Footer settings={settings} />
 
@@ -125,8 +121,8 @@ function App() {
         open={showForm}
         onClose={() => setShowForm(false)}
         onSubmitted={() => {
-          // Messages need admin approval, so we don't add to the tree directly.
-          // Just close the form — the confirmation animation is handled inside the form.
+          setShowForm(false);
+          loadMessages(); // Refresh the tree immediately
         }}
       />
     </div>

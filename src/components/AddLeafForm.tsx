@@ -146,7 +146,7 @@ export function AddLeafForm({ open, onClose, onSubmitted }: AddLeafFormProps) {
           message: messageText.trim(),
           photo_url: photoUrl,
           leaf_type: chosenLeafType,
-          is_approved: false,
+          is_approved: true,
         })
         .select()
         .single();
