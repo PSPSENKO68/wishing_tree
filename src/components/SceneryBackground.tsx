@@ -1,6 +1,6 @@
 export function SceneryBackground() {
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+    <div className="absolute inset-0 pointer-events-none overflow-hidden z-0" aria-hidden="true">
       {/* Sky gradient */}
       <div
         className="absolute inset-0"

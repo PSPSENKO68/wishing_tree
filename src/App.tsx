@@ -82,7 +82,6 @@ function App() {
 
   return (
     <div className="relative min-h-screen">
-      <SceneryBackground />
       <FallingLeavesEffect />
       <SoundToggle />
 
@@ -111,7 +110,8 @@ function App() {
         )}
       </section>
 
-      <div>
+      <div className="relative">
+        <SceneryBackground />
         <TreeSection
           messages={messages}
           onLeafClick={setSelectedMessage}
