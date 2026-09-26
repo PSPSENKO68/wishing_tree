@@ -1,60 +1,197 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Volume2, VolumeX } from 'lucide-react';
-import ReactPlayer from 'react-player';
+
+// YouTube IFrame API types
+declare global {
+  interface Window {
+    onYouTubeIframeAPIReady: () => void;
+    YT: {
+      Player: new (
+        id: string,
+        config: {
+          width: string;
+          height: string;
+          videoId: string;
+          playerVars: Record<string, number>;
+          events: Record<string, (e: unknown) => void>;
+        }
+      ) => YTPlayer;
+      PlayerState: { PLAYING: number; PAUSED: number; ENDED: number };
+    };
+  }
+}
+
+interface YTPlayer {
+  playVideo: () => void;
+  pauseVideo: () => void;
+  seekTo: (seconds: number, allowSeekAhead: boolean) => void;
+  setVolume: (volume: number) => void;
+  getPlayerState: () => number;
+  getCurrentTime: () => number;
+  destroy: () => void;
+}
+
+const VIDEO_ID = 'ZlCUygJEgog';
+const START_SEC = 10;
+const END_SEC = 30;
 
 export function SoundToggle() {
   const [soundOn, setSoundOn] = useState(false);
-  const [hasInteracted, setHasInteracted] = useState(false);
+  const playerRef = useRef<YTPlayer | null>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const apiLoadedRef = useRef(false);
+  const pendingPlayRef = useRef(false);
 
   useEffect(() => {
     const stored = localStorage.getItem('farewell-sound');
     if (stored === 'true') {
       setSoundOn(true);
-      setHasInteracted(true);
     }
   }, []);
+
+  // Load YouTube IFrame API once
+  useEffect(() => {
+    if (apiLoadedRef.current) return;
+    if (document.getElementById('yt-iframe-api')) return;
+    
+    const tag = document.createElement('script');
+    tag.id = 'yt-iframe-api';
+    tag.src = 'https://www.youtube.com/iframe_api';
+    const firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag?.parentNode?.insertBefore(tag, firstScriptTag);
+    apiLoadedRef.current = true;
+  }, []);
+
+  const startLoopTimer = useCallback(() => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      if (playerRef.current) {
+        const time = playerRef.current.getCurrentTime();
+        if (time >= END_SEC || time < START_SEC) {
+          playerRef.current.seekTo(START_SEC, true);
+        }
+      }
+    }, 500);
+  }, []);
+
+  const stopLoopTimer = useCallback(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  }, []);
+
+  // Initialize YouTube player when API is ready
+  useEffect(() => {
+    const initPlayer = () => {
+      if (playerRef.current) return;
+
+      // Create a container div off-screen for the player
+      let container = document.getElementById('yt-bg-player-container');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'yt-bg-player-container';
+        container.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;pointer-events:none;';
+        document.body.appendChild(container);
+        
+        const playerDiv = document.createElement('div');
+        playerDiv.id = 'yt-bg-player';
+        container.appendChild(playerDiv);
+      }
+
+      playerRef.current = new window.YT.Player('yt-bg-player', {
+        width: '1',
+        height: '1',
+        videoId: VIDEO_ID,
+        playerVars: {
+          autoplay: 0,
+          controls: 0,
+          disablekb: 1,
+          fs: 0,
+          modestbranding: 1,
+          rel: 0,
+          start: START_SEC,
+        },
+        events: {
+          onReady: () => {
+            playerRef.current?.setVolume(35);
+            if (pendingPlayRef.current) {
+              playerRef.current?.seekTo(START_SEC, true);
+              playerRef.current?.playVideo();
+              startLoopTimer();
+              pendingPlayRef.current = false;
+            }
+          },
+          onStateChange: (event: unknown) => {
+            const e = event as { data: number };
+            // If video ended, loop back
+            if (e.data === window.YT?.PlayerState?.ENDED) {
+              playerRef.current?.seekTo(START_SEC, true);
+              playerRef.current?.playVideo();
+            }
+          },
+        },
+      });
+    };
+
+    if (window.YT && window.YT.Player) {
+      initPlayer();
+    } else {
+      window.onYouTubeIframeAPIReady = initPlayer;
+    }
+
+    return () => {
+      stopLoopTimer();
+    };
+  }, [startLoopTimer, stopLoopTimer]);
+
+  // React to soundOn changes
+  useEffect(() => {
+    if (soundOn) {
+      if (playerRef.current) {
+        try {
+          playerRef.current.seekTo(START_SEC, true);
+          playerRef.current.playVideo();
+          startLoopTimer();
+        } catch {
+          // Player not ready yet
+          pendingPlayRef.current = true;
+        }
+      } else {
+        pendingPlayRef.current = true;
+      }
+    } else {
+      if (playerRef.current) {
+        try {
+          playerRef.current.pauseVideo();
+        } catch {
+          // Player not ready
+        }
+      }
+      stopLoopTimer();
+      pendingPlayRef.current = false;
+    }
+  }, [soundOn, startLoopTimer, stopLoopTimer]);
 
   const toggleSound = () => {
     const newState = !soundOn;
     setSoundOn(newState);
-    setHasInteracted(true);
     localStorage.setItem('farewell-sound', String(newState));
   };
 
   return (
-    <>
-      <button
-        onClick={toggleSound}
-        className="fixed top-6 right-6 z-40 w-12 h-12 rounded-full bg-cream/80 backdrop-blur-sm shadow-md hover:shadow-lg flex items-center justify-center text-warm-brown hover:text-terracotta transition-all duration-300 border border-warm-sand/50"
-        aria-label={soundOn ? 'Mute sound' : 'Enable sound'}
-        title={soundOn ? 'Sound on' : 'Sound off'}
-      >
-        {soundOn ? (
-          <Volume2 className="w-5 h-5 animate-pulse" />
-        ) : (
-          <VolumeX className="w-5 h-5" />
-        )}
-      </button>
-
-      {/* Hidden YouTube player for Background Music */}
-      {hasInteracted && (
-        <div className="hidden">
-          <ReactPlayer
-            url="https://www.youtube.com/watch?v=ZlCUygJEgog"
-            playing={soundOn}
-            loop={true}
-            volume={0.35}
-            width="0"
-            height="0"
-            config={{
-              youtube: {
-                playerVars: { autoplay: 1 }
-              }
-            }}
-          />
-        </div>
+    <button
+      onClick={toggleSound}
+      className="fixed top-6 right-6 z-40 w-12 h-12 rounded-full bg-cream/80 backdrop-blur-sm shadow-md hover:shadow-lg flex items-center justify-center text-warm-brown hover:text-terracotta transition-all duration-300 border border-warm-sand/50"
+      aria-label={soundOn ? 'Mute sound' : 'Enable sound'}
+      title={soundOn ? 'Sound on' : 'Sound off'}
+    >
+      {soundOn ? (
+        <Volume2 className="w-5 h-5 animate-pulse" />
+      ) : (
+        <VolumeX className="w-5 h-5" />
       )}
-    </>
+    </button>
   );
 }
 

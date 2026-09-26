@@ -305,9 +305,9 @@ export function AddLeafForm({ open, onClose, onSubmitted }: AddLeafFormProps) {
                 {/* Leaf type picker */}
                 <div>
                   <label className="block text-sm font-sans font-600 text-warm-brown mb-1.5">
-                    Leaf Type <span className="text-warm-brown/40 font-400">(optional)</span>
+                    Icon Type <span className="text-warm-brown/40 font-400">(optional)</span>
                   </label>
-                  <div className="grid grid-cols-6 gap-2">
+                  <div className="grid grid-cols-4 gap-2">
                     {LEAF_TYPES.map((type) => {
                       const colors = LEAF_COLORS[type];
                       const isSelected = leafType === type;
@@ -332,7 +332,7 @@ export function AddLeafForm({ open, onClose, onSubmitted }: AddLeafFormProps) {
                     })}
                   </div>
                   {leafType === '' && (
-                    <p className="text-xs text-warm-brown/40 mt-1">A leaf will be chosen at random if you don't pick one.</p>
+                    <p className="text-xs text-warm-brown/40 mt-1">An icon will be chosen at random if you don't pick one.</p>
                   )}
                 </div>
 
