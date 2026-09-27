@@ -26,6 +26,21 @@
   75% { transform: skewX(3deg); }
 }
 
+@keyframes flyRight {
+  from { transform: translateX(-20vw) translateY(0); }
+  to { transform: translateX(120vw) translateY(-50px); }
+}
+
+@keyframes flyLeft {
+  from { transform: translateX(120vw) translateY(0); }
+  to { transform: translateX(-20vw) translateY(30px); }
+}
+
+@keyframes flap {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.4); }
+}
+
 @keyframes drawTrunk {
   from { stroke-dashoffset: 1000; }
   to { stroke-dashoffset: 0; }
