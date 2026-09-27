@@ -43,6 +43,45 @@ export function SoundToggle() {
   const pendingPlayRef = useRef(false);
   const hasAutoStarted = useRef(false);
 
+  const playMusicNow = useCallback(() => {
+    if (playerRef.current) {
+      try {
+        if (playerRef.current.getPlayerState() !== window.YT?.PlayerState?.PLAYING) {
+          playerRef.current.seekTo(START_SEC, true);
+          playerRef.current.playVideo();
+          if (timerRef.current) clearInterval(timerRef.current);
+          timerRef.current = setInterval(() => {
+            if (playerRef.current) {
+              const time = playerRef.current.getCurrentTime();
+              if (time >= END_SEC || time < START_SEC) {
+                playerRef.current.seekTo(START_SEC, true);
+              }
+            }
+          }, 500);
+        }
+      } catch {
+        pendingPlayRef.current = true;
+      }
+    } else {
+      pendingPlayRef.current = true;
+    }
+  }, []);
+
+  const pauseMusicNow = useCallback(() => {
+    if (playerRef.current) {
+      try {
+        playerRef.current.pauseVideo();
+      } catch {
+        // Player not ready
+      }
+    }
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    pendingPlayRef.current = false;
+  }, []);
+
   // Auto-start music on first user interaction (browsers require it)
   useEffect(() => {
     const stored = localStorage.getItem('farewell-sound');
@@ -56,6 +95,7 @@ export function SoundToggle() {
       hasAutoStarted.current = true;
       setSoundOn(true);
       localStorage.setItem('farewell-sound', 'true');
+      playMusicNow();
       // Clean up listeners
       window.removeEventListener('click', autoStart);
       window.removeEventListener('scroll', autoStart);
@@ -175,35 +215,21 @@ export function SoundToggle() {
   // React to soundOn changes
   useEffect(() => {
     if (soundOn) {
-      if (playerRef.current) {
-        try {
-          playerRef.current.seekTo(START_SEC, true);
-          playerRef.current.playVideo();
-          startLoopTimer();
-        } catch {
-          // Player not ready yet
-          pendingPlayRef.current = true;
-        }
-      } else {
-        pendingPlayRef.current = true;
-      }
+      playMusicNow();
     } else {
-      if (playerRef.current) {
-        try {
-          playerRef.current.pauseVideo();
-        } catch {
-          // Player not ready
-        }
-      }
-      stopLoopTimer();
-      pendingPlayRef.current = false;
+      pauseMusicNow();
     }
-  }, [soundOn, startLoopTimer, stopLoopTimer]);
+  }, [soundOn, playMusicNow, pauseMusicNow]);
 
   const toggleSound = () => {
     const newState = !soundOn;
     setSoundOn(newState);
     localStorage.setItem('farewell-sound', String(newState));
+    if (newState) {
+      playMusicNow();
+    } else {
+      pauseMusicNow();
+    }
   };
 
   return (

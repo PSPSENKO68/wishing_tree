@@ -123,13 +123,21 @@ function App() {
 
       {/* Message card overlay */}
       <AnimatePresence>
-        {selectedMessage && (
-          <MessageCard
-            key={`card-${selectedMessage.id}`}
-            message={selectedMessage}
-            onClose={() => setSelectedMessage(null)}
-          />
-        )}
+        {selectedMessage && (() => {
+          const currentIndex = messages.findIndex(m => m.id === selectedMessage.id);
+          const hasPrev = currentIndex > 0;
+          const hasNext = currentIndex !== -1 && currentIndex < messages.length - 1;
+
+          return (
+            <MessageCard
+              key={`card-${selectedMessage.id}`}
+              message={selectedMessage}
+              onClose={() => setSelectedMessage(null)}
+              onPrev={hasPrev ? () => setSelectedMessage(messages[currentIndex - 1]) : undefined}
+              onNext={hasNext ? () => setSelectedMessage(messages[currentIndex + 1]) : undefined}
+            />
+          );
+        })()}
       </AnimatePresence>
 
       {/* Add leaf form */}

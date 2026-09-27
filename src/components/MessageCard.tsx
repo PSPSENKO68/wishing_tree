@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { X } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import type { Message } from '@/lib/supabase';
 import { LEAF_COLORS, LEAF_LABELS } from '@/lib/supabase';
 import { LeafShape } from './LeafShapes';
@@ -7,6 +7,8 @@ import { LeafShape } from './LeafShapes';
 interface MessageCardProps {
   message: Message | null;
   onClose: () => void;
+  onNext?: () => void;
+  onPrev?: () => void;
 }
 
 function hashStr(str: string): number {
@@ -18,7 +20,7 @@ function hashStr(str: string): number {
   return Math.abs(hash);
 }
 
-export function MessageCard({ message, onClose }: MessageCardProps) {
+export function MessageCard({ message, onClose, onNext, onPrev }: MessageCardProps) {
   if (!message) return null;
 
   const colors = LEAF_COLORS[message.leaf_type] || LEAF_COLORS.mint;
@@ -95,6 +97,26 @@ export function MessageCard({ message, onClose }: MessageCardProps) {
             })}
           </p>
         </div>
+
+        {/* Navigation Buttons */}
+        {(onPrev || onNext) && (
+          <div className="flex justify-between items-center px-6 pb-6 pt-2 border-t border-warm-sand/30">
+            <button
+              onClick={(e) => { e.stopPropagation(); onPrev?.(); }}
+              disabled={!onPrev}
+              className={`flex items-center gap-1 text-sm font-sans font-600 transition-colors ${onPrev ? 'text-warm-brown hover:text-terracotta' : 'text-warm-brown/20'}`}
+            >
+              <ChevronLeft className="w-4 h-4" /> Previous
+            </button>
+            <button
+              onClick={(e) => { e.stopPropagation(); onNext?.(); }}
+              disabled={!onNext}
+              className={`flex items-center gap-1 text-sm font-sans font-600 transition-colors ${onNext ? 'text-warm-brown hover:text-terracotta' : 'text-warm-brown/20'}`}
+            >
+              Next <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        )}
       </motion.div>
     </motion.div>
   );

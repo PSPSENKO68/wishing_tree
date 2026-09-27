@@ -53,14 +53,14 @@ export function TreeSection({ messages, onLeafClick, onAddLeaf }: TreeSectionPro
   };
 
   return (
-    <section id="tree-section" className="relative min-h-screen pt-12 px-4 pb-32 md:pb-24">
+    <section id="tree-section" className="relative min-h-screen pt-12 px-4 pb-20 md:pb-12 flex flex-col">
       {/* Leaf counter */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
-        className="text-center mb-6"
+        className="text-center mb-6 shrink-0"
       >
         <div className="inline-flex items-center gap-2 bg-cream/80 backdrop-blur-sm px-5 py-2.5 rounded-full shadow-md border border-warm-sand/30">
           <Leaf className="w-5 h-5 text-sage" />
@@ -77,7 +77,7 @@ export function TreeSection({ messages, onLeafClick, onAddLeaf }: TreeSectionPro
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="max-w-md mx-auto mb-6"
+          className="max-w-md mx-auto mb-6 shrink-0 w-full"
         >
           <div className="relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-warm-brown/40" />
@@ -102,7 +102,7 @@ export function TreeSection({ messages, onLeafClick, onAddLeaf }: TreeSectionPro
       )}
 
       {/* Tree */}
-      <div className="relative max-w-4xl mx-auto" style={{ aspectRatio: '800 / 700' }}>
+      <div className="relative max-w-4xl mx-auto w-full mt-auto" style={{ aspectRatio: '800 / 700' }}>
         <TreeSVG />
 
         {/* Leaves overlay */}
